@@ -2,6 +2,7 @@ package com.coolweather.android;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -136,6 +137,12 @@ public class ChooseAreaFragment extends Fragment {
                 }else if(currentLevel==LEVEL_CITY){
                     selecedCity = cityList.get(i);
                     queryCounties();
+                }else if(currentLevel==LEVEL_COUNTY){
+                    String weatherId = countyList.get(i).getWeatherId();
+                    Intent intent = new Intent(getActivity(),WeatherActivity.class);
+                    intent.putExtra("weather_id",weatherId);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
         });
@@ -160,7 +167,6 @@ public class ChooseAreaFragment extends Fragment {
         titleText.setText("中国");
         backButton.setVisibility(View.GONE);
         provinceList = DataSupport.findAll(Province.class);
-
         if(provinceList.size()>0){
             dataList.clear();
             for (Province province:provinceList){
@@ -186,8 +192,14 @@ public class ChooseAreaFragment extends Fragment {
         HttpUtil.sendOhHttpRequest(address, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                closeProgressDialog();
-                Toast.makeText(getContext(),"加載失敗！",Toast.LENGTH_SHORT).show();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        closeProgressDialog();
+                        Toast.makeText(getContext(),"加載失敗！",Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -204,10 +216,11 @@ public class ChooseAreaFragment extends Fragment {
                     Log.e("county",responseText);
                 }
                 if(result){
-                    backButton.setVisibility(View.VISIBLE);
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            Toast.makeText(getContext(),"加載成功！",Toast.LENGTH_SHORT).show();
+                            Log.e("UI","UI线程");
                             closeProgressDialog();
                             if("province".equals(type)){
                                 queryProvinces();
@@ -218,6 +231,7 @@ public class ChooseAreaFragment extends Fragment {
                             }
                         }
                     });
+
                 }
             }
 
@@ -230,7 +244,7 @@ public class ChooseAreaFragment extends Fragment {
      */
     private void queryCities() {
         titleText.setText(selectedProvince.getProvinceName());
-
+        backButton.setVisibility(View.VISIBLE);
         cityList = DataSupport.where("provinceId=?",String.valueOf(selectedProvince.getId())).find(City.class);
         if(cityList.size()>0){
             backButton.setVisibility(View.VISIBLE);
@@ -251,14 +265,13 @@ public class ChooseAreaFragment extends Fragment {
     }
     private void queryCounties() {
         titleText.setText(selecedCity.getCityName());
-
+        backButton.setVisibility(View.VISIBLE);
         countyList = DataSupport.where("cityId=?",String.valueOf(selecedCity.getId())).find(County.class);
         if(countyList.size()>0){
             dataList.clear();
             for (County county :countyList){
                 dataList.add(county.getCountyName());
             }
-
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
             currentLevel = LEVEL_COUNTY;

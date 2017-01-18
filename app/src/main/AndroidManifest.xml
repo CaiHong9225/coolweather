@@ -17,15 +17,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".WeatherActivity"
+            android:launchMode="singleTop">
+
+        </activity>
+
 
         <meta-data
             android:name="com.google.android.gms.car.application"
-            android:resource="@xml/automotive_app_desc" />
-        <!--
- Main music service, provides media browsing and media playback services to
-         consumers through MediaBrowserService and MediaSession. Consumers connect to it through
-         MediaBrowser (for browsing) and MediaController (for playback control)
-        -->
+            android:resource="@xml/automotive_app_desc" /><!--
+Main music service, provides media browsing and media playback services to
+     consumers through MediaBrowserService and MediaSession. Consumers connect to it through
+     MediaBrowser (for browsing) and MediaController (for playback control)
+    -->
     </application>
 
 </manifest>
