@@ -3,6 +3,7 @@
     package="com.coolweather.android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name="org.litepal.LitePalApplication"
         android:allowBackup="true"
@@ -19,18 +20,18 @@
         </activity>
         <activity
             android:name=".WeatherActivity"
-            android:launchMode="singleTop">
-
-        </activity>
+            android:launchMode="singleTop"></activity>
 
 
-        <meta-data
-            android:name="com.google.android.gms.car.application"
-            android:resource="@xml/automotive_app_desc" /><!--
+        <!--
 Main music service, provides media browsing and media playback services to
      consumers through MediaBrowserService and MediaSession. Consumers connect to it through
      MediaBrowser (for browsing) and MediaController (for playback control)
-    -->
+        -->
+        <service
+            android:name=".service.AutoUpdateService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
